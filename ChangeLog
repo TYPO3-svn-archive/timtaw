@@ -1,4 +1,4 @@
-2005-02-13  Sebastian Kurfuerst  <sebastian@garbage-group.de>
+2005-02-22  Sebastian Kurfuerst  <sebastian@garbage-group.de>
 	* changed behavior to "edit this page" link because it is a lot easier and cleaner in the beginning then faking the edit boxes
 	* added automatic log out of wiki backend user
 	* conversions to single quotes
