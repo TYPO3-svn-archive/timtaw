@@ -36,20 +36,21 @@
  *
  *
  *
- *   61: class tx_timtaw_cm1 extends t3lib_SCbase
- *   68:     function main()
+ *   67: class tx_timtaw_cm1 extends t3lib_SCbase
+ *   74:     function main()
  *
  *              SECTION: Render functions
- *  121:     function renderModuleContent()
+ *  129:     function getBEgroups()
+ *  142:     function renderModuleContent()
  *
  *              SECTION: Processing functions
- *  191:     function doWikify ()
+ *  235:     function doWikify ()
+ *  333:     function getListOfSubpages_onedimensional($twodimensional)
+ *  356:     function getListOfSubpages($id, $depth, $recursionLevel=0)
+ *  403:     function getVersionsOfPage($id)
+ *  421:     function printContent()
  *
- *              SECTION: Helper functions
- *  270:     function getListOfSubpages($id, $depth, $prevId_array=array(), $recursionLevel=0)
- *  321:     function printContent()
- *
- * TOTAL FUNCTIONS: 5
+ * TOTAL FUNCTIONS: 8
  * (This index is automatically created/updated by the extension "extdeveval")
  *
  */
@@ -118,16 +119,16 @@ class tx_timtaw_cm1 extends t3lib_SCbase {
 	 *
 	 *******************************************/
 
-	 
-	 
+
+
 	/**
 	 * get backend groups enabled for timtaw
 	 *
-	 * @return		array		returns names and UIDs of all backend groups: uid => name
+	 * @return	array		returns names and UIDs of all backend groups: uid => name
 	 */
 	function getBEgroups() {
 		$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('uid,title', 'be_groups', 'deleted=0 AND hidden=0 AND tx_timtaw_enable=1', '' ,'');
-		
+
 		while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res))	{
 			$groups[$row['uid']] = $row['title'];
 		}
@@ -144,19 +145,19 @@ class tx_timtaw_cm1 extends t3lib_SCbase {
 
 			// render BE group list as group for wiki users
 		$beGroups = $this->getBEgroups();
-		
+
 		$beGroupOptions = '';
 		if(is_array($beGroups)) {
 			foreach($beGroups as $uid =>$title) {
 				$beGroupOptions .= '<option value="'.$uid.'">'.$title.'</option>';
-			}		
+			}
 			$beGroupOptions = '<select name="beGroup">'.$beGroupOptions.'</select>';
 		}
-		
+
 			// look if page is already wikified to unwikify it.
 		$record = t3lib_BEfunc::getRecordRaw('pages','uid='.intval($this->id),'tx_timtaw_enable');
 		$alreadyWikified = $record['tx_timtaw_enable'];
-		
+
 			// Create an array of sub page uids from the current page:
 		$affectedPagesArr = $this->getListOfSubpages($this->id, 100);
 		#$affectedPagesArr[$this->id] = $this->id;
@@ -184,13 +185,13 @@ class tx_timtaw_cm1 extends t3lib_SCbase {
 				$subContent = '';
 				foreach($page as $uid) {
 					$row = t3lib_beFunc::readPageAccess($uid, $BE_USER->getPagePermsClause(1));
-					
+
 					$subContent .= 'Version #'.$row['t3ver_id'].': '.$row['t3ver_label'].'<br>';
-					
+
 					if ($row['pid'] != -1) {
 						$activeRecord = $row;
 					}
-				
+
 				}
 				$tableRows[] = '
 							<tr class="bgColor4">
@@ -200,7 +201,7 @@ class tx_timtaw_cm1 extends t3lib_SCbase {
 							</tr>
 						';
 			}
-			
+
 		}
 
 			// Assemble the whole output:
@@ -240,16 +241,27 @@ class tx_timtaw_cm1 extends t3lib_SCbase {
 			// Create a new wiki backend user:
 		$username = 'timtaw_' . md5(microtime().t3lib_div::getIndpEnv('REMOTE_ADDR'));
 		$password = 'timtaw_' . md5(t3lib_div::getIndpEnv('REMOTE_ADDR').'pw'.microtime());
-		
+
 			// check groups if they are wiki-enabled groups
 		$beGroup = intval(t3lib_div::_GP('beGroup'));
 		$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('uid', 'be_groups', 'deleted=0 AND hidden=0 AND tx_timtaw_enable=1 AND uid='.$beGroup, '' ,'');
-		
+
 			// if group is not valid or empty, output an error message
 		if(!$GLOBALS['TYPO3_DB']->sql_fetch_assoc($res) || empty($beGroup))	{
 			return 'Please create a wiki-enabled backend user group!';
 		}
-		
+
+			// set UC to the correct admin panel options
+		$uc_new['TSFE_adminConfig'] = Array(
+			'display_top'	=> 1,
+			'display_edit' => 1,
+			'edit_displayFieldIcons' => 0,
+			'edit_displayIcons' => 1,
+			'edit_editFormsOnPage' => 1,
+			'edit_editNoPopup' => 0
+		);
+		$uc=serialize($uc_new);
+
 		$res = $TYPO3_DB->exec_insertQuery (
 			'be_users',
 			array(
@@ -258,7 +270,8 @@ class tx_timtaw_cm1 extends t3lib_SCbase {
 				'db_mountpoints' => $this->id,
 				'realName' => 'TimTaw Backend User',
 				'disableIPlock' => 1,
-				'usergroup' => $beGroup
+				'usergroup' => $beGroup,
+				'uc' => $uc
 			)
 		);
 
@@ -307,12 +320,16 @@ class tx_timtaw_cm1 extends t3lib_SCbase {
 
 
 
-	/*******************************************
+	/**
+	 * ****************************************
 	 *
 	 * Helper functions
 	 *
-	 *******************************************/
-
+	 * ******************************************/
+	 *
+	 * @param	[type]		$twodimensional: ...
+	 * @return	[type]		...
+	 */
 	 function getListOfSubpages_onedimensional($twodimensional) {
 		 foreach($twodimensional as $value1) {
 			 if(is_array($value1)) {
@@ -356,7 +373,7 @@ class tx_timtaw_cm1 extends t3lib_SCbase {
 					// Add the current ID to the array of IDs:
 				$subPagesArr[$id] = $id;
 			}
-			
+
 				// Find subpages:
 			if ($depth > $recursionLevel)	{
 				$res = $TYPO3_DB->exec_SELECTquery('uid,doktype,php_tree_stop', 'pages', 'pid='.$id.' AND doktype IN (1,2,5) AND deleted=0', '' ,'sorting');
@@ -380,12 +397,13 @@ class tx_timtaw_cm1 extends t3lib_SCbase {
 	}
 
 	/**
-	 *
+	 * @param	[type]		$id: ...
+	 * @return	[type]		...
 	 */
 	function getVersionsOfPage($id) {
 		$id = intval($id);
 		# $GLOBALS['TYPO3_DB']->debugOutput = TRUE;
-		
+
 		if($id > 0) {
 			$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('uid,doktype,php_tree_stop', 'pages', ' t3ver_oid = '.$id.' AND doktype IN (1,2,5) AND deleted=0');
 			while ($rowVersion = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res))	{
@@ -394,7 +412,7 @@ class tx_timtaw_cm1 extends t3lib_SCbase {
 			return $subPagesArr?$subPagesArr:array();
 		} else return array();
 	}
-	 
+
 	/**
 	 * The classic print-my-content function, echoing the collected content.
 	 *

@@ -1,4 +1,4 @@
 TIMTAWTODO
 ----------
-
-
+- show versions / diff / page with this CE changed / rollback
+- dewikify

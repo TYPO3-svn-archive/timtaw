@@ -1,3 +1,13 @@
+2005-02-13  Sebastian Kurfuerst  <sebastian@garbage-group.de>
+	* changed behavior to "edit this page" link because it is a lot easier and cleaner in the beginning then faking the edit boxes
+	* added automatic log out of wiki backend user
+	* conversions to single quotes
+	* added hook to class.t3lib_tsfebeuserauth.php , patch can be found in doc/class.t3lib_tsfebeuserauth.patch [CORE CHANGE]
+	* fixed bugs
+	* added default UC for FE admin panel
+	* changes are versioned: move/delete/new => new page version, content change => new record version
+	* started working on diff view
+
 2005-02-12  Sebastian Kurfuerst  <sebastian@garbage-group.de>
 	* removed currently edited page element from page output
 	* changes on records are versioned, no deletes/inserts/moves of records are versioned yet

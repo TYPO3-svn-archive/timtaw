@@ -1,8 +1,16 @@
+includeLibs.tx_timtaw_pi1 = EXT:timtaw/pi1/class.tx_timtaw_pi1.php
 includeLibs.tx_timtaw_pi2 = EXT:timtaw/pi2/class.tx_timtaw_pi2.php
 
 tt_content.stdWrap {
-	wrap = |
+	editPanel.edit.displayRecord = 0
+	editPanel.allow = move,edit,new,delete
 #	postUserFunc = tx_timtaw_pi2->generateEditIcons
-	postUserFuncInt = tx_timtaw_pi2->generateEditIcons
+#	postUserFuncInt = tx_timtaw_pi2->generateEditIcons
 # using USER_INT for testing only here!
+}
+diff_view = PAGE
+diff_view {
+	typeNum = 142
+	config.admPanel = 0
+	50 < plugin.tx_timtaw_pi1
 }

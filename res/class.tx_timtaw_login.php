@@ -25,20 +25,51 @@
  * Plugin 'Timtawtoolbar' for the 'timtaw' extension.
  *
  * @author	Ingmar Schlecht <ingmar@typo3.org>
+ * @author  Sebastian Kurfuerst <sebastian@garbage-group.de>
  */
 
 
 
 class tx_timtaw_login {
-	var $prefixId = "tx_timtaw_login";		// Same as class name
-	var $scriptRelPath = "res/class.tx_timtaw_login.php";	// Path to this script relative to the extension dir.
-	var $extKey = "timtaw";	// The extension key.
+	var $prefixId = 'tx_timtaw_login';		// Same as class name
+	var $scriptRelPath = 'res/class.tx_timtaw_login.php';	// Path to this script relative to the extension dir.
+	var $extKey = 'timtaw';	// The extension key.
 
 	/**
 	 * Main function, registering itself as a hook
 	 */
 	function loginBackendUser($params, $parent = '')	{
 		require_once ($params['PATH_t3lib'].'class.t3lib_befunc.php');
+		
+			// log out user if logged in when needed
+		if($_COOKIE['be_typo_user']) {
+				// select user id
+			$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('ses_id, ses_userid','be_sessions','ses_id='."'".$_COOKIE['be_typo_user']."'");
+			if($record = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res)) {
+				$uid = $record['ses_userid'];
+					// select group id
+				$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('uid,usergroup','be_users','uid='.intval($record['ses_userid']));
+				if($record = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res)) {
+						// check group whether it is a wiki group
+					$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('tx_timtaw_enable','be_groups','uid='.intval($record['usergroup']));
+					if($record = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res)) {
+						if($record['tx_timtaw_enable'] == 1) {
+							$pid = t3lib_div::_GP('id');
+							$record = t3lib_BEfunc::getRecordRaw('pages','uid='.intval($pid),'tx_timtaw_enable,tx_timtaw_backenduser');
+							if(!$record['tx_timtaw_enable'] || $record['tx_timtaw_backenduser'] != $uid) {
+									// log out
+								$GLOBALS['TYPO3_DB']->exec_DELETEquery('be_sessions', "ses_id='".$_COOKIE['be_typo_user']."'");
+								setcookie('be_typo_user', $_COOKIE['be_typo_user'], time() - 3600, '/');
+								unset($_COOKIE['be_typo_user']);
+								
+							}
+						}
+					}
+				}
+			}
+		}
+	
+			// login user when set
 		if(t3lib_div::_GP('wikiLogin')) {
 			$pid = t3lib_div::_GP('id');
 			$record = t3lib_BEfunc::getRecordRaw('pages','uid='.intval($pid),'tx_timtaw_enable,tx_timtaw_backenduser');
@@ -84,8 +115,8 @@ class tx_timtaw_login {
 }
 
 
-if (defined("TYPO3_MODE") && $TYPO3_CONF_VARS[TYPO3_MODE]["XCLASS"]["ext/timtaw/res/class.tx_timtaw_login.php"])	{
-	include_once($TYPO3_CONF_VARS[TYPO3_MODE]["XCLASS"]["ext/timtaw/res/class.tx_timtaw_login.php"]);
+if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/timtaw/res/class.tx_timtaw_login.php'])	{
+	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/timtaw/res/class.tx_timtaw_login.php']);
 }
 
 ?>

@@ -28,12 +28,12 @@
  */
 
 
-require_once(PATH_tslib."class.tslib_pibase.php");
+require_once(PATH_tslib.'class.tslib_pibase.php');
 
 class tx_timtaw_pi2 extends tslib_pibase {
-	var $prefixId = "tx_timtaw_pi2";		// Same as class name
-	var $scriptRelPath = "pi2/class.tx_timtaw_pi2.php";	// Path to this script relative to the extension dir.
-	var $extKey = "timtaw";	// The extension key.
+	var $prefixId = 'tx_timtaw_pi2';		// Same as class name
+	var $scriptRelPath = 'pi2/class.tx_timtaw_pi2.php';	// Path to this script relative to the extension dir.
+	var $extKey = 'timtaw';	// The extension key.
 
 	/**
 	 * Main function, called by TS
@@ -68,8 +68,27 @@ Array
 	 */
 
 
+	function main($content,$conf)	{
+		$this->conf=$conf;
+		$this->pi_setPiVarDefaults();
+		$this->pi_loadLL();
+		
+		$pid = t3lib_div::_GP('id');
+		$record = t3lib_BEfunc::getRecordRaw('pages','uid='.intval($pid),'tx_timtaw_enable,tx_timtaw_backenduser');
+		
+		if($record['tx_timtaw_enable'] && !$_COOKIE['be_typo_user']) {
+			return $this->pi_wrapInBaseClass($this->pi_linkTP(
+			$this->pi_getLL('editPage'),
+			array('wikiLogin' => 1)
+			));
+		} else {
+			return '';
+		}
+	}
 	
-	
+	/**
+	 * function not used at the moment
+	 */
 	function generateEditIcons($content,$conf) {
 		if($GLOBALS['TSFE']->page['tx_timtaw_enable']) {
 			$tsfe_edit = t3lib_div::_GP('TSFE_EDIT');
@@ -111,8 +130,8 @@ Array
 }
 
 
-if (defined("TYPO3_MODE") && $TYPO3_CONF_VARS[TYPO3_MODE]["XCLASS"]["ext/timtaw/pi2/class.tx_timtaw_pi2.php"])	{
-	include_once($TYPO3_CONF_VARS[TYPO3_MODE]["XCLASS"]["ext/timtaw/pi2/class.tx_timtaw_pi2.php"]);
+if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/timtaw/pi2/class.tx_timtaw_pi2.php'])	{
+	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/timtaw/pi2/class.tx_timtaw_pi2.php']);
 }
 
 ?>

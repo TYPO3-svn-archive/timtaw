@@ -44,7 +44,7 @@ class tx_timtaw_module1 extends t3lib_SCbase {
 	var $pageinfo;
 
 	/**
-	 *
+	 * @return	[type]		...
 	 */
 	function init()	{
 		global $BE_USER,$LANG,$BACK_PATH,$TCA_DESCR,$TCA,$CLIENT,$TYPO3_CONF_VARS;
@@ -60,6 +60,8 @@ class tx_timtaw_module1 extends t3lib_SCbase {
 
 	/**
 	 * Adds items to the ->MOD_MENU array. Used for the function menu selector.
+	 *
+	 * @return	[type]		...
 	 */
 	function menuConfig()	{
 		global $LANG;
@@ -76,6 +78,8 @@ class tx_timtaw_module1 extends t3lib_SCbase {
 		// If you chose "web" as main module, you will need to consider the $this->id parameter which will contain the uid-number of the page clicked in the page tree
 	/**
 	 * Main function of the module. Write the content to $this->content
+	 *
+	 * @return	[type]		...
 	 */
 	function main()	{
 		global $BE_USER,$LANG,$BACK_PATH,$TCA_DESCR,$TCA,$CLIENT,$TYPO3_CONF_VARS;
@@ -142,6 +146,8 @@ class tx_timtaw_module1 extends t3lib_SCbase {
 
 	/**
 	 * Prints out the module HTML
+	 *
+	 * @return	[type]		...
 	 */
 	function printContent()	{
 
@@ -151,6 +157,8 @@ class tx_timtaw_module1 extends t3lib_SCbase {
 
 	/**
 	 * Generates the module content
+	 *
+	 * @return	[type]		...
 	 */
 	function moduleContent()	{
 		switch((string)$this->MOD_SETTINGS["function"])	{

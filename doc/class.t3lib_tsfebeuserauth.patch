@@ -1,0 +1,34 @@
+Index: class.t3lib_tsfebeuserauth.php
+===================================================================
+RCS file: /cvsroot/typo3/TYPO3core/t3lib/class.t3lib_tsfebeuserauth.php,v
+retrieving revision 1.19
+diff -u -r1.19 class.t3lib_tsfebeuserauth.php
+--- class.t3lib_tsfebeuserauth.php	2 Jan 2005 17:18:00 -0000	1.19
++++ class.t3lib_tsfebeuserauth.php	20 Feb 2005 11:12:05 -0000
+@@ -940,7 +940,7 @@
+ 	 * @see index_ts.php
+ 	 */
+ 	function extEditAction()	{
+-		global $TCA;
++		global $TCA, $TYPO3_CONF_VARS;
+ 			// Commands:
+ 		list($table,$uid) = explode(':',$this->TSFE_EDIT['record']);
+ 		if ($this->TSFE_EDIT['cmd'] && $table && $uid && isset($TCA[$table]))	{
+@@ -949,6 +949,17 @@
+ 			$recData=array();
+ 			$cmdData=array();
+ 			$cmd=$this->TSFE_EDIT['cmd'];
++			
++			// ****************
++			// extEditAction HOOK
++			// ****************
++			if (is_array($TYPO3_CONF_VARS['SC_OPTIONS']['t3lib/class.t3lib_tsfebeuserauth.php']['extEditAction'])) {
++				$_params = array();
++				foreach($TYPO3_CONF_VARS['SC_OPTIONS']['t3lib/class.t3lib_tsfebeuserauth.php']['extEditAction'] as $_funcRef) {
++								t3lib_div::callUserFunction($_funcRef,$_params,$this);
++				}
++			}
++			
+ 			switch($cmd)	{
+ 				case 'hide':
+ 				case 'unhide':
