@@ -68,9 +68,9 @@ class tx_timtaw_pi2 extends tslib_pibase {
 		if($GLOBALS['TSFE']->fe_user->user['tx_timtaw_begroup']) {
 				// wenn schon ein BE_USER eingeloggt ist
 			if($GLOBALS['BE_USER']->user['uid']) {
-				$content ='edit mode | '. $this->pi_linkTP('browse mode',array('tx_timtaw_logout'=>1));
+				$content ='You are in: <i>edit mode.</i> <BR /> Switch to:  <i>'.$this->pi_linkTP('normal mode',array('tx_timtaw_logout'=>1)).'.</i>';
 			} else {
-				$content = $this->pi_linkTP('edit mode',array('tx_timtaw_login'=>1)).' | normal mode';
+				$content ='You are in: <i>normal mode.</i> <BR /> Switch to:  <i>'.$this->pi_linkTP('edit mode',array('tx_timtaw_login'=>1)).'.</i>';
 			}
 		}
 		return $_COOKIE['be_typo_user'].'<BR />'.$content;
