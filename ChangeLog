@@ -1,3 +1,6 @@
+2005-02-04  Sebastian Kurfuerst  <sebastian@garbage-group.de>
+	* fixed bug causing user having to reload the page twice
+
 2005-01-29  Robert Lemke  <robert@typo3.org>
  + Created ChangeLog. Played a bit with Eclipse CVS functionality, please don't mind.
  ~ Converted to single quotes no really interesting changes.

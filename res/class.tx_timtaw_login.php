@@ -49,6 +49,7 @@ class tx_timtaw_login {
 				} else {
 					$id = substr(md5(uniqid('')),0,32);		// New random session-$id is made
 					setcookie('be_typo_user', $id, time()+3600, '/');
+					$_COOKIE['be_typo_user'] = $id; // change cookie superglobal, else we need a refresh
 				}
 
 				$userId = $record['tx_timtaw_backenduser'];
@@ -67,6 +68,9 @@ class tx_timtaw_login {
 					);
 
 					$GLOBALS['TYPO3_DB']->exec_INSERTquery('be_sessions', $insertFields);
+					
+					// we have to set the user's start- and endtime as well.
+					
 					#return 'Timtaw Backenduser '.$userId.' wurde eingeloggt.';
 				}
 			} else {
