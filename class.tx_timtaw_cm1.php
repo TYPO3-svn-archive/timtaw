@@ -38,7 +38,7 @@ class tx_timtaw_cm1 {
 
 				// Repeat this (below) for as many items you want to add!
 				// Remember to add entries in the localconf.php file for additional titles.
-				debug($backRef);
+				#debug($backRef);
 			$url = t3lib_extMgm::extRelPath('timtaw').'cm1/index.php?id='.$uid;
 			$localItems[] = $backRef->linkItem(
 				$GLOBALS['LANG']->getLLL('cm1_title',$LL),

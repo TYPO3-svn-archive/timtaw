@@ -72,8 +72,13 @@ Array
 	
 	function generateEditIcons($content,$conf) {
 		if($GLOBALS['TSFE']->page['tx_timtaw_enable']) {
+			$tsfe_edit = t3lib_div::_GP('TSFE_EDIT');
 			
-			$editIcons= '<form method="POST" action="index.php?wikiLogin=1&id='.$this->cObj->data['pid'].'&pageID='.$this->cObj->data['pid'].'">
+				// remove currently edited content from page
+			if($tsfe_edit['cmd'] == 'edit' && $tsfe_edit['record'] == 'tt_content:'.$this->cObj->data['uid'] && !isset($tsfe_edit['update_close'])) {
+				return '<a name="'.$this->cObj->data['uid'].'"></a>';
+			}
+			$editIcons= '<form method="POST" action="index.php?wikiLogin=1&id='.$this->cObj->data['pid'].'#'.$this->cObj->data['uid'].'">
 			<input type="hidden" name="TSFE_ADMIN_PANEL[display_top]" value="1">
 			<input type="hidden" name="TSFE_ADMIN_PANEL[display_preview]" value="">
 			<input type="hidden" name="TSFE_ADMIN_PANEL[display_cache]" value="">

@@ -1,5 +1,10 @@
+2005-02-12  Sebastian Kurfuerst  <sebastian@garbage-group.de>
+	* removed currently edited page element from page output
+	* changes on records are versioned, no deletes/inserts/moves of records are versioned yet
+	* removed use of pageID (not necessary because its the same as id and ID is available everywhere in the FE)
+
 2005-02-04  Sebastian Kurfuerst  <sebastian@garbage-group.de>
- # fixed bug causing user having to reload the page twice
+	* fixed bug causing user having to reload the page twice
 
 2005-01-29  Robert Lemke  <robert@typo3.org>
  + Created ChangeLog. Played a bit with Eclipse CVS functionality, please don't mind.
