@@ -1,0 +1,8 @@
+includeLibs.tx_timtaw_pi2 = EXT:timtaw/pi2/class.tx_timtaw_pi2.php
+
+tt_content.stdWrap {
+	wrap = |
+#	postUserFunc = tx_timtaw_pi2->generateEditIcons
+	postUserFuncInt = tx_timtaw_pi2->generateEditIcons
+# using USER_INT for testing only here!
+}
