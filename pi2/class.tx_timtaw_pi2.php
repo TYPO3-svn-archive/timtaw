@@ -24,7 +24,8 @@
 /**
  * Plugin 'Timtawtoolbar' for the 'timtaw' extension.
  *
- * @author	Ingmar Schlecht <ingmar@typo3.org>
+ * @author	Sebastian Kurfuerst  <sebastian@garbage-group.de>
+ * @author  Ingmar Schlecht <ingmar@typo3.org>
  */
 
 
@@ -64,34 +65,13 @@ class tx_timtaw_pi2 extends tslib_pibase {
 		}
 	}
 
-	/**
-	 * Checks if TimTaw is enabled at the current page
+	
+	/*************************
 	 *
-	 * @return	boolean		1 if enabled, 0 if not enabled
-	 */
-	function timtawEnabled() {
-		$pid = t3lib_div::_GP('id');
-		$record = t3lib_BEfunc::getRecordRaw('pages','uid='.intval($pid),'tx_timtaw_enable,tx_timtaw_backenduser');
-
-		if($record['tx_timtaw_enable'] && !$_COOKIE['be_typo_user']) {
-			return 1;
-		} else {
-			return 0;
-		}
-	}
-
-	/**
-	 * Generates panel for page. At the moment, just the "edit this page" link is generated here, but other links are supposed to be generated here as well (revision view, ...)
+	 * Revision view
 	 *
-	 * @return	string		HTML
-	 */
-	function generatePagePanel() {
-		return  $this->pi_linkTP(
-			$this->pi_getLL('editPage'),
-			array('wikiLogin' => 1)
-			);
-	}
-
+	 *************************/
+	 
 	/**
 	 * generates revision list of records or whole pages. can be configured by setting uid
 	 *
@@ -239,6 +219,14 @@ class tx_timtaw_pi2 extends tslib_pibase {
 		return $output;
 	}
 
+	
+	/*************************
+	 *
+	 * helper functions
+	 *
+	 *************************/
+	 
+	 
 	/**
 	 * Removes certain content elements on the page when needed, is calles by tt_content.stdWrap.postUserFunc
 	 *
@@ -252,13 +240,42 @@ class tx_timtaw_pi2 extends tslib_pibase {
 			
 				// no content elements are outputted on the revision view
 			if($GPvars['cmd'] == 'revision') {
-				return '';
+			#	return '';
 			}
 			
 			return $content;
 		} else {
 			return $content;
 		}
+	}
+	
+	
+	/**
+	 * Checks if TimTaw is enabled at the current page
+	 *
+	 * @return	boolean		1 if enabled, 0 if not enabled
+	 */
+	function timtawEnabled() {
+		$pid = t3lib_div::_GP('id');
+		$record = t3lib_BEfunc::getRecordRaw('pages','uid='.intval($pid),'tx_timtaw_enable,tx_timtaw_backenduser');
+
+		if($record['tx_timtaw_enable'] && !$_COOKIE['be_typo_user']) {
+			return 1;
+		} else {
+			return 0;
+		}
+	}
+
+	/**
+	 * Generates panel for page. At the moment, just the "edit this page" link is generated here, but other links are supposed to be generated here as well (revision view, ...)
+	 *
+	 * @return	string		HTML
+	 */
+	function generatePagePanel() {
+		return  $this->pi_linkTP(
+			$this->pi_getLL('editPage'),
+			array('wikiLogin' => 1)
+			);
 	}
 
 }

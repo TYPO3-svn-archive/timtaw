@@ -22,7 +22,7 @@
 *  This copyright notice MUST APPEAR in all copies of the script!
 ***************************************************************/
 /**
- * Plugin 'Diff view' for the 'timtaw' extension.
+ * Plugin 'Diff view' for the 'timtaw' extension. NOT USED AT THE MOMENT
  *
  * @author	Sebastian Kurfuerst <sebastian@garbage-group.de>
  */
@@ -67,129 +67,6 @@ class tx_timtaw_pi1 extends tslib_pibase {
 		$content = $this->formatHistory($history);
 
 		return $this->pi_wrapInBaseClass($content);
-	}
-
-	/**
-	 * Creates the "history" for a single record, parsing the versions of this record
-	 *
-	 * @param	integer		$uid: ID of record to parse
-	 * @param	string		$table: database table of the record
-	 * @return	array		Array with history information
-	 */
-	function createRecordHistory($uid, $table) {
-		$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('t3ver_oid,t3ver_id,t3ver_label,uid',$table,'t3ver_oid='.intval($uid).' AND deleted!=1');
-		while($record = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res)) {
-			$label = explode(', ', $record['t3ver_label']);
-			$timestamp = $label[0];
-
-			$out[$timestamp]['uid'] = $record['uid'];
-			$out[$timestamp]['table'] = $table;
-			$out[$timestamp]['oid'] = $record['t3ver_oid'];
-			$out[$timestamp]['version'] = $record['t3ver_id'];			$out[$timestamp]['action'] = $label[1];
-			$out[$timestamp]['pid'] = $label[2];
-			$out[$timestamp]['ip'] = $label[3];
-			$out[$timestamp]['time'] = $label[0];
-		}
-		return $out;
-	}
-
-	/**
-	 * creates the history of a whole page. At first, the history of the page itself is generated,  and afterwards the history of content elements is created and merged afterwards
-	 *
-	 * @param	integer		$pid: Page ID
-	 * @return	array		array with sorted history
-	 */
-	function createPageHistory($pid) {
-		$pid = intval($pid);
-			// create history of page
-		$history[] = $this->createRecordHistory($pid, 'pages');
-			// create history of CEs
-		$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('uid','tt_content','pid='.$pid.' AND deleted!=1');
-		while($record = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res)) {
-			$history[] = $this->createRecordHistory($record['uid'], 'tt_content');;
-		}
-			// merge historys
-		$historyCombined = $this->mergeHistory($history);
-		return $historyCombined;
-	}
-
-	/**
-	 * Merges multiple historys into one, based on the timestamp
-	 *
-	 * @param	array		$historys: multi-dimensional history array
-	 * @return	array		Array with one history ready to parse
-	 */
-	function mergeHistory($historys) {
-		$mergedHistory = $historys[0];
-		foreach($historys as $i => $singleHistory) {
-			if(is_array($singleHistory)) {
-				foreach($singleHistory as $key => $value) {
-					while(isset($mergedHistory[$key])) {
-						$key++;
-					}
-					$mergedHistory[$key] = $value;
-				} // inner foreach
-			} // is_array singleHistory
-		} // outer foreach
-		ksort($mergedHistory);
-		reset($mergedHistory);
-
-		$i = 0;
-		foreach($mergedHistory as $key => $value) {
-			$mergedHistory_unified[$i] = $value;
-			$i++;
-		}
-		return $mergedHistory_unified;
-	}
-
-	/**
-	 * [Describe function...]
-	 *
-	 * @param	[type]		$inputData: ...
-	 * @return	[type]		...
-	 */
-	function formatHistory($inputData) {
-		
-		$this->templateCode =  $this->cObj->fileResource($this->conf["templateFile"]);
-		
-			// get subparts from template
-    $t = array();
-    $t['total'] = $this->cObj->getSubpart($this->templateCode,
-      '###REVISION###');
-    $t['tableline'] = $this->cObj->getSubpart($this->templateCode,
-      '###TABLELINE###');
-		$content_row = '';
-		
-		foreach($inputData as $singleRecord) {
-			if(empty($singleRecord['time'])) {
-				continue;
-			}
-
-			$markerArray['###TIME###'] = strftime($this->pi_getLL('timeFormat'), $singleRecord['time']);
-			$markerArray['###ACTION###'] = $this->pi_getLL('action_'.$singleRecord['action']);
-			$markerArray['###IP###'] = $singleRecord['ip'];
-			debug($singleRecord);
-			if($singleRecord['table'] == 'pages') {
-				$id = $singleRecord['uid'];
-				$params = array('wikiLogin' => 1);
-				
-			} else {
-				$id = $GLOBALS['TSFE']->id;
-				$params = array(
-						'ADMCMD_vPrev['.$singleRecord['table'].'%3a'.$singleRecord['oid'].']' => $singleRecord['uid'],
-						'wikiLogin' => 1
-				);
-			}
-			$markerArray['###SHOW###'] = $this->pi_linkToPage($this->pi_getLL('showVersion'),$id, '',$params);
-			$content_row .=
-          $this->cObj->substituteMarkerArrayCached($t['tableline'],
-          $markerArray, array(), array());
-		}
-		
-		$output = $this->cObj->substituteMarkerArrayCached($t['total'], Array(), Array('###TABLELINE###' => $content_row), Array() );
-		
-		
-		return $output;
 	}
 }
 

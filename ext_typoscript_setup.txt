@@ -1,5 +1,5 @@
 plugin.tx_timtaw_pi2 {
-	templateFile = EXT:timtaw/pi2/res/revisionview.html # template for revision view
+	templateFile = EXT:timtaw/pi2/res/revisionview.html
 }
 
 includeLibs.tx_timtaw_pi2 = EXT:timtaw/pi2/class.tx_timtaw_pi2.php

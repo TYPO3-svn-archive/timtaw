@@ -1,0 +1,25 @@
+Index: index_ts.php
+===================================================================
+RCS file: /cvsroot/typo3/TYPO3core/typo3/sysext/cms/tslib/index_ts.php,v
+retrieving revision 1.17
+diff -u -b -B -r1.17 index_ts.php
+--- index_ts.php	2 Jan 2005 17:18:02 -0000	1.17
++++ index_ts.php	2 Mar 2005 13:59:46 -0000
+@@ -161,6 +160,17 @@
+ 	$TSFE->initFEuser();
+ $TT->pull();
+ 
++// ****************
++// PRE BE_USER HOOK
++// ****************
++if (is_array($TYPO3_CONF_VARS['SC_OPTIONS']['tslib/index_ts.php']['preBeUser'])) {
++	$_params = array('PATH_t3lib' => PATH_t3lib);
++	foreach($TYPO3_CONF_VARS['SC_OPTIONS']['tslib/index_ts.php']['preBeUser'] as $_funcRef) {
++	        t3lib_div::callUserFunction($_funcRef,$_params,$this);
++	}
++}
++
++
+ // *********
+ // BE_USER
+ // *********
