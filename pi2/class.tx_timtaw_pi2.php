@@ -47,21 +47,33 @@ class tx_timtaw_pi2 extends tslib_pibase {
 		$this->conf=$conf;
 		$this->pi_setPiVarDefaults();
 		$this->pi_loadLL();
-
+		
+		$content = $this->editSwitch();
+		
 		if($this->timtawEnabled()) {
 			switch($this->piVars['cmd']) {
 				case 'revision':
 					$content = $this->generateRevisionList();
-					break;
+				break;
 				default:
 					$content = $this->generatePagePanel();
-					break;
+				break;
 			}
-
-			return $this->pi_wrapInBaseClass($content);
-		} else {
-			return '';
 		}
+		return $this->pi_wrapInBaseClass($content);
+	}
+	
+	
+	function editSwitch() {
+		if($GLOBALS['TSFE']->fe_user->user['tx_timtaw_begroup']) {
+				// wenn schon ein BE_USER eingeloggt ist
+			if($GLOBALS['BE_USER']->user['uid']) {
+				$content ='edit mode | '. $this->pi_linkTP('browse mode',array('tx_timtaw_logout'=>1));
+			} else {
+				$content = $this->pi_linkTP('edit mode',array('tx_timtaw_login'=>1)).' | normal mode';
+			}
+		}
+		return $_COOKIE['be_typo_user'].'<BR />'.$content;
 	}
 
 	
@@ -95,13 +107,13 @@ class tx_timtaw_pi2 extends tslib_pibase {
 
 
 
-		/**
- * Creates the "history" for a single record, parsing the versions of this record
- *
- * @param	integer		$uid: ID of record to parse
- * @param	string		$table: database table of the record
- * @return	array		Array with history information
- */
+	/**
+	 * Creates the "history" for a single record, parsing the versions of this record
+	 *
+	 * @param	integer		$uid: ID of record to parse
+	 * @param	string		$table: database table of the record
+	 * @return	array		Array with history information
+	 */
 	function createRecordHistory($uid, $table) {
 		$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('t3ver_oid,t3ver_id,t3ver_label,uid',$table,'t3ver_oid='.intval($uid).' AND deleted!=1');
 		while($record = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res)) {
@@ -178,12 +190,10 @@ class tx_timtaw_pi2 extends tslib_pibase {
 
 		$this->templateCode =  $this->cObj->fileResource($this->conf["templateFile"]);
 
-			// get subparts from template
-    $t = array();
-    $t['total'] = $this->cObj->getSubpart($this->templateCode,
-      '###REVISION###');
-    $t['tableline'] = $this->cObj->getSubpart($this->templateCode,
-      '###TABLELINE###');
+		// get subparts from template
+		$t = array();
+		$t['total'] = $this->cObj->getSubpart($this->templateCode,'###REVISION###');
+		$t['tableline'] = $this->cObj->getSubpart($this->templateCode,'###TABLELINE###');
 		$content_row = '';
 
 		foreach($inputData as $singleRecord) {
@@ -202,14 +212,14 @@ class tx_timtaw_pi2 extends tslib_pibase {
 			} else {
 				$id = $GLOBALS['TSFE']->id;
 				$params = array(
-						'ADMCMD_vPrev['.$singleRecord['table'].'%3a'.$singleRecord['oid'].']' => $singleRecord['uid'],
-						'wikiLogin' => 1
+					'ADMCMD_vPrev['.$singleRecord['table'].'%3a'.$singleRecord['oid'].']' => $singleRecord['uid'],
+					'wikiLogin' => 1
 				);
 			}
 			$markerArray['###SHOW###'] = $this->pi_linkToPage($this->pi_getLL('showVersion'),$id, '',$params);
 			$content_row .=
-          $this->cObj->substituteMarkerArrayCached($t['tableline'],
-          $markerArray, array(), array());
+			$this->cObj->substituteMarkerArrayCached($t['tableline'],
+			$markerArray, array(), array());
 		}
 
 		$output = $this->cObj->substituteMarkerArrayCached($t['total'], Array(), Array('###TABLELINE###' => $content_row), Array() );
@@ -291,7 +301,7 @@ class tx_timtaw_pi2 extends tslib_pibase {
 		$this->templateCode =  $this->cObj->fileResource($this->conf["templateFile"]);
 		
 		$template = $this->cObj->getSubpart($this->templateCode,
-      '###PAGEPANEL###');
+	  '###PAGEPANEL###');
 		
 		$markerArray['###EDITPAGE###'] = $this->pi_linkTP(
 			$this->pi_getLL('editPage'),
