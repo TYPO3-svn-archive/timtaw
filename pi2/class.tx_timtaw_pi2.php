@@ -22,10 +22,10 @@
 *  This copyright notice MUST APPEAR in all copies of the script!
 ***************************************************************/
 /**
- * Plugin 'Timtawtoolbar' for the 'timtaw' extension.
+ * Plugin 'Frontend Toolbar' for the 'timtaw' extension.
  *
  * @author	Sebastian Kurfuerst  <sebastian@garbage-group.de>
- * @author  Ingmar Schlecht <ingmar@typo3.org>
+ * @author  Ingmar Schlecht  <ingmar@typo3.org>
  */
 
 
@@ -64,18 +64,20 @@ class tx_timtaw_pi2 extends tslib_pibase {
 	}
 	
 	function editSwitch() {
-		#debug($GLOBALS['TSFE']->fe_user->user);
 		
-		$beGroup = tx_timtaw_login::getBEgroup($this->conf['templateFrontendUser']);
+		$tx_timtaw_login = t3lib_div::makeInstance('tx_timtaw_login');
+		$beGroup = $tx_timtaw_login->getBEgroup($this->conf['templateFrontendUser']);
+		 
 		if($beGroup) {
+			#debug($GLOBALS['BE_USER']);
 				// wenn schon ein BE_USER eingeloggt ist
 			if($GLOBALS['BE_USER']->user['uid']) {
 				$content ='You are in: <i>edit mode.</i> <BR /> Switch to:  <i>'.$this->pi_linkTP('normal mode',array('tx_timtaw_logout'=>1)).'.</i>';
 			} else {
 				$content ='You are in: <i>normal mode.</i> <BR /> Switch to:  <i>'.$this->pi_linkTP('edit mode',array('tx_timtaw_login'=>1)).'.</i>';
 				
-				if($this->conf['templateBackendUser']) {
-					$GLOBALS["TSFE"]->fe_user->setKey('ses','tx_timtaw_login', $this->conf['templateBackendUser']);
+				if($this->conf['templateFrontendUser']) {
+					$GLOBALS["TSFE"]->fe_user->setKey('ses','tx_timtaw_login', $this->conf['templateFrontendUser']);
 				} else {
 					$GLOBALS["TSFE"]->fe_user->setKey('ses','tx_timtaw_login', '');
 				}
