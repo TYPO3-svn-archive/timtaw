@@ -1,3 +1,9 @@
+2005-03-02  Sebastian Kurfuerst  <sebastian@garbage-group.de>
+	* fixed bugs
+	* found bug in core (ID 842), which has to be fixed. until then, [BE][lockBeUserToDBmounts] has to be set to 0 which is a huge security hole.
+	* created revision view
+	* cleaned up, merged pi1 and pi2 because it belongs together
+
 2005-02-22  Sebastian Kurfuerst  <sebastian@garbage-group.de>
 	* changed behavior to "edit this page" link because it is a lot easier and cleaner in the beginning then faking the edit boxes
 	* added automatic log out of wiki backend user

@@ -37,96 +37,230 @@ class tx_timtaw_pi2 extends tslib_pibase {
 
 	/**
 	 * Main function, called by TS
-
-	 Array
-(
-    [TSFE_ADMIN_PANEL] => Array
-        (
-            [display_top] => 1
-            [display_preview] =>
-            [display_cache] =>
-            [display_publish] =>
-            [display_edit] => 1
-            [edit_displayFieldIcons] => 0
-            [edit_displayIcons] => 1
-            [edit_editFormsOnPage] => 1
-            [edit_editNoPopup] => 0
-            [display_tsdebug] =>
-            [display_info] =>
-        )
-Array
-(
-    [TSFE_EDIT] => Array
-        (
-            [cmd] => edit
-            [record] => tt_content:2
-        )
-
-)
-)
-
+	 *
+	 * @param	[type]		$content: ...
+	 * @param	[type]		$conf: ...
+	 * @return	string	content
 	 */
-
-
 	function main($content,$conf)	{
 		$this->conf=$conf;
 		$this->pi_setPiVarDefaults();
 		$this->pi_loadLL();
-		
-		$pid = t3lib_div::_GP('id');
-		$record = t3lib_BEfunc::getRecordRaw('pages','uid='.intval($pid),'tx_timtaw_enable,tx_timtaw_backenduser');
-		
-		if($record['tx_timtaw_enable'] && !$_COOKIE['be_typo_user']) {
-			return $this->pi_wrapInBaseClass($this->pi_linkTP(
-			$this->pi_getLL('editPage'),
-			array('wikiLogin' => 1)
-			));
+
+		if($this->timtawEnabled()) {
+
+			switch($this->piVars['cmd']) {
+				case 'revision':
+					$content = $this->generateRevisionList();
+					break;
+				default:
+					$content = $this->generatePagePanel();
+					break;
+			}
+
+			return $this->pi_wrapInBaseClass($content);
 		} else {
 			return '';
 		}
 	}
-	
-	/**
-	 * function not used at the moment
-	 */
-	function generateEditIcons($content,$conf) {
-		if($GLOBALS['TSFE']->page['tx_timtaw_enable']) {
-			$tsfe_edit = t3lib_div::_GP('TSFE_EDIT');
-			
-				// remove currently edited content from page
-			if($tsfe_edit['cmd'] == 'edit' && $tsfe_edit['record'] == 'tt_content:'.$this->cObj->data['uid'] && !isset($tsfe_edit['update_close'])) {
-				return '<a name="'.$this->cObj->data['uid'].'"></a>';
-			}
-			$editIcons= '<form method="POST" action="index.php?wikiLogin=1&id='.$this->cObj->data['pid'].'#'.$this->cObj->data['uid'].'">
-			<input type="hidden" name="TSFE_ADMIN_PANEL[display_top]" value="1">
-			<input type="hidden" name="TSFE_ADMIN_PANEL[display_preview]" value="">
-			<input type="hidden" name="TSFE_ADMIN_PANEL[display_cache]" value="">
-			<input type="hidden" name="TSFE_ADMIN_PANEL[display_publish]" value="">
-			<input type="hidden" name="TSFE_ADMIN_PANEL[display_tsdebug]" value="">
-			<input type="hidden" name="TSFE_ADMIN_PANEL[display_info]" value="">
-			<input type="hidden" name="TSFE_ADMIN_PANEL[display_edit]" value="1">
-			<input type="hidden" name="TSFE_ADMIN_PANEL[edit_displayFieldIcons]" value="0">
-			<input type="hidden" name="TSFE_ADMIN_PANEL[edit_displayIcons]" value="1">
-			<input type="hidden" name="TSFE_ADMIN_PANEL[edit_editFormsOnPage]" value="1">
-			<input type="hidden" name="TSFE_ADMIN_PANEL[edit_editNoPopup]" value="0">
-			
-			<input type="hidden" name="TSFE_EDIT[cmd]" value="edit">
-			<input type="hidden" name="TSFE_EDIT[record]" value="tt_content:'.$this->cObj->data['uid'].'"><input type="submit"></form>';
-			
-			#$editIcons = $this->cObj->editPanel('', '');
-			/*$editIcons = '
-									<table border="1" cellpadding="0" cellspacing="0" bordercolor="black" class="typo3-editPanel">
-										<tr>
-											<td nowrap="nowrap" bgcolor="#ABBBB4" class="typo3-editPanel-controls"><a href="index.php?id=1&wikiLogin=1&pageID=1&ADMCMD_editIcons=1&TSFE_EDIT[cmd]=edit&TSFE_EDIT[record]=tt_content:2&TSFE_ADMIN_PANEL[display_top]=1&TSFE_ADMIN_PANEL[display_edit]=1&TSFE_ADMIN_PANEL[edit_displayFieldIcons]=0&TSFE_ADMIN_PANEL[edit_displayIcons]=1&TSFE_ADMIN_PANEL[edit_editFormsOnPage]=1&TSFE_ADMIN_PANEL[edit_editNoPopup]=0" ><img src="t3lib/gfx/edit2.gif" width="11" height="12" hspace="2" border="0" title="" align="top" alt="" /></a><a href="#up"><img src="t3lib/gfx/button_up.gif" width="11" height="10" vspace="1" hspace="2" border="0" title="" align="top" alt="" /></a><a href="#down"><img src="t3lib/gfx/button_down.gif" width="11" height="10" vspace="1" hspace="2" border="0" title="" align="top" alt="" /></a><a href="#inv"><img src="t3lib/gfx/button_hide.gif" width="11" height="10" vspace="1" hspace="2" border="0" title="" align="top" alt="" /></a><a href="#new"><img src="t3lib/gfx/new_record.gif" width="16" height="12" vspace="1" hspace="2" border="0" title="" align="top" alt="" /></a><a href="#" onClick="if (confirm(unescape(\'Are you sure you want to delete this record%3F\'))){document.location.href="#del1"} return false;"><img src="t3lib/gfx/delete_record.gif" width="12" height="12" vspace="1" hspace="2" border="0" title="" align="top" alt="" /></a></td>
 
-											<td nowrap="nowrap" bgcolor="#F6F2E6" class="typo3-editPanel-label"><font face="verdana" size="1" color="black">&nbsp;'.$this->cObj->data['header'].'&nbsp;</font></td>
-										</tr>
-									</table>
-								';*/
-			$content = '<div style="border:1px dotted black; padding: 5px;">'.$content.' </div><div style="width: 100%; text-align:right;">'.$editIcons.'</div>';
+	/**
+	 * Checks if TimTaw is enabled at the current page
+	 *
+	 * @return	boolean		1 if enabled, 0 if not enabled
+	 */
+	function timtawEnabled() {
+		$pid = t3lib_div::_GP('id');
+		$record = t3lib_BEfunc::getRecordRaw('pages','uid='.intval($pid),'tx_timtaw_enable,tx_timtaw_backenduser');
+
+		if($record['tx_timtaw_enable'] && !$_COOKIE['be_typo_user']) {
+			return 1;
+		} else {
+			return 0;
 		}
+	}
+
+	/**
+	 * Generates panel for page. At the moment, just the "edit this page" link is generated here, but other links are supposed to be generated here as well (revision view, ...)
+	 *
+	 * @return	string		HTML
+	 */
+	function generatePagePanel() {
+		return  $this->pi_linkTP(
+			$this->pi_getLL('editPage'),
+			array('wikiLogin' => 1)
+			);
+	}
+
+	/**
+	 * generates revision list of records or whole pages. can be configured by setting uid
+	 *
+	 * @return	string		HTML
+	 */
+	function generateRevisionList() {
+		$content = '';
+		if($this->piVars['uid']) {
+			if($this->piVars['table']) {
+				$table = $this->piVars['table'];
+			} else {
+				$table = 'tt_content';
+			}
+			$history = $this->createRecordHistory(intval($this->piVars['uid']), $table);
+		} else {
+			$history = $this->createPageHistory($this->cObj->data['uid']);
+		}
+
+		$content = $this->formatHistory($history);
 		return $content;
 	}
+
+
+
+		/**
+ * Creates the "history" for a single record, parsing the versions of this record
+ *
+ * @param	integer		$uid: ID of record to parse
+ * @param	string		$table: database table of the record
+ * @return	array		Array with history information
+ */
+	function createRecordHistory($uid, $table) {
+		$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('t3ver_oid,t3ver_id,t3ver_label,uid',$table,'t3ver_oid='.intval($uid).' AND deleted!=1');
+		while($record = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res)) {
+			$label = explode(', ', $record['t3ver_label']);
+			$timestamp = $label[0];
+
+			$out[$timestamp]['uid'] = $record['uid'];
+			$out[$timestamp]['table'] = $table;
+			$out[$timestamp]['oid'] = $record['t3ver_oid'];
+			$out[$timestamp]['version'] = $record['t3ver_id'];			$out[$timestamp]['action'] = $label[1];
+			$out[$timestamp]['pid'] = $label[2];
+			$out[$timestamp]['ip'] = $label[3];
+			$out[$timestamp]['time'] = $label[0];
+		}
+		return $out;
+	}
+
+	/**
+	 * creates the history of a whole page. At first, the history of the page itself is generated,  and afterwards the history of content elements is created and merged afterwards
+	 *
+	 * @param	integer		$pid: Page ID
+	 * @return	array		array with sorted history
+	 */
+	function createPageHistory($pid) {
+		$pid = intval($pid);
+			// create history of page
+		$history[] = $this->createRecordHistory($pid, 'pages');
+			// create history of CEs
+		$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('uid','tt_content','pid='.$pid.' AND deleted!=1');
+		while($record = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res)) {
+			$history[] = $this->createRecordHistory($record['uid'], 'tt_content');;
+		}
+			// merge historys
+		$historyCombined = $this->mergeHistory($history);
+		return $historyCombined;
+	}
+
+	/**
+	 * Merges multiple historys into one, based on the timestamp
+	 *
+	 * @param	array		$historys: multi-dimensional history array
+	 * @return	array		Array with one history ready to parse
+	 */
+	function mergeHistory($historys) {
+		$mergedHistory = $historys[0];
+		foreach($historys as $i => $singleHistory) {
+			if(is_array($singleHistory)) {
+				foreach($singleHistory as $key => $value) {
+					while(isset($mergedHistory[$key])) {
+						$key++;
+					}
+					$mergedHistory[$key] = $value;
+				} // inner foreach
+			} // is_array singleHistory
+		} // outer foreach
+		ksort($mergedHistory);
+		reset($mergedHistory);
+
+		$i = 0;
+		foreach($mergedHistory as $key => $value) {
+			$mergedHistory_unified[$i] = $value;
+			$i++;
+		}
+		return $mergedHistory_unified;
+	}
+
+	/**
+	 * Formats a history array with a template and outputs it.
+	 *
+	 * @param	array		$inputData: multidimensional array with rows and cols
+	 * @return	string		HTML output
+	 */
+	function formatHistory($inputData) {
+
+		$this->templateCode =  $this->cObj->fileResource($this->conf["templateFile"]);
+
+			// get subparts from template
+    $t = array();
+    $t['total'] = $this->cObj->getSubpart($this->templateCode,
+      '###REVISION###');
+    $t['tableline'] = $this->cObj->getSubpart($this->templateCode,
+      '###TABLELINE###');
+		$content_row = '';
+
+		foreach($inputData as $singleRecord) {
+			if(empty($singleRecord['time'])) {
+				continue;
+			}
+
+			$markerArray['###TIME###'] = strftime($this->pi_getLL('timeFormat'), $singleRecord['time']);
+			$markerArray['###ACTION###'] = $this->pi_getLL('action_'.$singleRecord['action']);
+			$markerArray['###IP###'] = $singleRecord['ip'];
+
+			if($singleRecord['table'] == 'pages') {
+				$id = $singleRecord['uid'];
+				$params = array('wikiLogin' => 1);
+
+			} else {
+				$id = $GLOBALS['TSFE']->id;
+				$params = array(
+						'ADMCMD_vPrev['.$singleRecord['table'].'%3a'.$singleRecord['oid'].']' => $singleRecord['uid'],
+						'wikiLogin' => 1
+				);
+			}
+			$markerArray['###SHOW###'] = $this->pi_linkToPage($this->pi_getLL('showVersion'),$id, '',$params);
+			$content_row .=
+          $this->cObj->substituteMarkerArrayCached($t['tableline'],
+          $markerArray, array(), array());
+		}
+
+		$output = $this->cObj->substituteMarkerArrayCached($t['total'], Array(), Array('###TABLELINE###' => $content_row), Array() );
+
+
+		return $output;
+	}
+
+	/**
+	 * Removes certain content elements on the page when needed, is calles by tt_content.stdWrap.postUserFunc
+	 *
+	 * @param	string		$content: the content element
+	 * @param	array		$conf: the configuration array
+	 * @return	string		returns modified content
+	 */
+	function removeContentElements($content, $conf) {
+		if($this->timtawEnabled()) {
+			$GPvars = t3lib_div::_GP($this->prefixId);
+			
+				// no content elements are outputted on the revision view
+			if($GPvars['cmd'] == 'revision') {
+				return '';
+			}
+			
+			return $content;
+		} else {
+			return $content;
+		}
+	}
+
 }
 
 

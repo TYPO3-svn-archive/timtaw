@@ -63,7 +63,7 @@ class tx_timtaw_versionize {
 		$tce = t3lib_div::makeInstance('t3lib_TCEmain');
 		$cmd['pages'][$pid]['version']['action'] = 'new';
 		$cmd['pages'][$pid]['version']['treeLevel'] = 0;
-		$cmd['pages'][$pid]['version']['label'] = $this->createLabel($action);
+		$cmd['pages'][$pid]['version']['label'] = $this->createLabel($action, 'pages', $pid);
 		$tce->start(Array(), $cmd);
 		$tce->process_cmdmap();
 		
@@ -85,11 +85,13 @@ class tx_timtaw_versionize {
 	
 	
 	// action: m => move; d => delete; n => new; e => edit; h => hide; u => unhide
-	function createLabel ($action) {
+	function createLabel ($action, $table, $uid) {
 		$label[] = time();
 		$label[] = $action;
+		$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('t3ver_id', $table, 't3ver_oid=uid AND uid='.intval($uid));
+		$result = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
+		$label[] = $result['t3ver_id'];
 		$label[] = t3lib_div::getIndpEnv('REMOTE_ADDR');
-		
 		return implode(', ', $label);
 	}
 	
@@ -119,7 +121,7 @@ class tx_timtaw_versionize {
 					
 					if($recordChanged == 1) {
 						$cmd[$table][$id]['version']['action'] = 'new';
-						$cmd[$table][$id]['version']['label'] = $this->createLabel('e');
+						$cmd[$table][$id]['version']['label'] = $this->createLabel('e', $table, $id);
 						$tce->cmdmap = $cmd;
 						$tce->process_cmdmap();
 						

@@ -325,7 +325,7 @@ class tx_timtaw_cm1 extends t3lib_SCbase {
 	 *
 	 * Helper functions
 	 *
-	 * ******************************************/
+	 * ******************************************
 	 *
 	 * @param	[type]		$twodimensional: ...
 	 * @return	[type]		...

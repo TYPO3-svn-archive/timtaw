@@ -43,6 +43,10 @@ class tx_timtaw_pi1 extends tslib_pibase {
 	 * @return	string		HTML Content
 	 */
 	function main($content,$conf)	{
+		$this->conf = $conf;
+		$this->pi_setPiVarDefaults();
+		$this->pi_loadLL();
+		
 		$content = '';
 		switch($this->piVars['cmd']) {
 			case 'single':
@@ -82,10 +86,10 @@ class tx_timtaw_pi1 extends tslib_pibase {
 			$out[$timestamp]['table'] = $table;
 			$out[$timestamp]['oid'] = $record['t3ver_oid'];
 			$out[$timestamp]['version'] = $record['t3ver_id'];			$out[$timestamp]['action'] = $label[1];
-			$out[$timestamp]['ip'] = $label[2];
+			$out[$timestamp]['pid'] = $label[2];
+			$out[$timestamp]['ip'] = $label[3];
 			$out[$timestamp]['time'] = $label[0];
 		}
-
 		return $out;
 	}
 
@@ -102,7 +106,7 @@ class tx_timtaw_pi1 extends tslib_pibase {
 			// create history of CEs
 		$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('uid','tt_content','pid='.$pid.' AND deleted!=1');
 		while($record = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res)) {
-			$history[] = $this->createRecordHistory($record['uid'], 'tt_content');
+			$history[] = $this->createRecordHistory($record['uid'], 'tt_content');;
 		}
 			// merge historys
 		$historyCombined = $this->mergeHistory($history);
@@ -117,15 +121,16 @@ class tx_timtaw_pi1 extends tslib_pibase {
 	 */
 	function mergeHistory($historys) {
 		$mergedHistory = $historys[0];
-		for($i = 1; is_array($historys[$i]); $i++) {
-			foreach($historys[$i] as $key => $value) {
-				while(isset($mergedHistory[$key])) {
-					$key++;
-				}
-				$mergedHistory[$key] = $value;
-			}
-		}
-
+		foreach($historys as $i => $singleHistory) {
+			if(is_array($singleHistory)) {
+				foreach($singleHistory as $key => $value) {
+					while(isset($mergedHistory[$key])) {
+						$key++;
+					}
+					$mergedHistory[$key] = $value;
+				} // inner foreach
+			} // is_array singleHistory
+		} // outer foreach
 		ksort($mergedHistory);
 		reset($mergedHistory);
 
@@ -144,7 +149,47 @@ class tx_timtaw_pi1 extends tslib_pibase {
 	 * @return	[type]		...
 	 */
 	function formatHistory($inputData) {
-		debug($inputData);
+		
+		$this->templateCode =  $this->cObj->fileResource($this->conf["templateFile"]);
+		
+			// get subparts from template
+    $t = array();
+    $t['total'] = $this->cObj->getSubpart($this->templateCode,
+      '###REVISION###');
+    $t['tableline'] = $this->cObj->getSubpart($this->templateCode,
+      '###TABLELINE###');
+		$content_row = '';
+		
+		foreach($inputData as $singleRecord) {
+			if(empty($singleRecord['time'])) {
+				continue;
+			}
+
+			$markerArray['###TIME###'] = strftime($this->pi_getLL('timeFormat'), $singleRecord['time']);
+			$markerArray['###ACTION###'] = $this->pi_getLL('action_'.$singleRecord['action']);
+			$markerArray['###IP###'] = $singleRecord['ip'];
+			debug($singleRecord);
+			if($singleRecord['table'] == 'pages') {
+				$id = $singleRecord['uid'];
+				$params = array('wikiLogin' => 1);
+				
+			} else {
+				$id = $GLOBALS['TSFE']->id;
+				$params = array(
+						'ADMCMD_vPrev['.$singleRecord['table'].'%3a'.$singleRecord['oid'].']' => $singleRecord['uid'],
+						'wikiLogin' => 1
+				);
+			}
+			$markerArray['###SHOW###'] = $this->pi_linkToPage($this->pi_getLL('showVersion'),$id, '',$params);
+			$content_row .=
+          $this->cObj->substituteMarkerArrayCached($t['tableline'],
+          $markerArray, array(), array());
+		}
+		
+		$output = $this->cObj->substituteMarkerArrayCached($t['total'], Array(), Array('###TABLELINE###' => $content_row), Array() );
+		
+		
+		return $output;
 	}
 }
 
