@@ -49,7 +49,6 @@ class tx_timtaw_pi2 extends tslib_pibase {
 		$this->pi_loadLL();
 
 		if($this->timtawEnabled()) {
-
 			switch($this->piVars['cmd']) {
 				case 'revision':
 					$content = $this->generateRevisionList();
@@ -240,7 +239,7 @@ class tx_timtaw_pi2 extends tslib_pibase {
 			
 				// no content elements are outputted on the revision view
 			if($GPvars['cmd'] == 'revision') {
-			#	return '';
+				return '';
 			}
 			
 			return $content;
@@ -261,6 +260,22 @@ class tx_timtaw_pi2 extends tslib_pibase {
 
 		if($record['tx_timtaw_enable'] && !$_COOKIE['be_typo_user']) {
 			return 1;
+		} elseif($record['tx_timtaw_enable'] && $_COOKIE['be_typo_user']) {	// SOME MORE IN-DEPTH CHECKS
+			$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('ses_id, ses_userid','be_sessions','ses_id='."'".$_COOKIE['be_typo_user']."'");
+			if($record = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res)) {
+				$uid = $record['ses_userid'];
+					// select group id
+				$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('uid,usergroup','be_users','uid='.intval($record['ses_userid']));
+				if($record = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res)) {
+						// check group whether it is a wiki group
+					$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('tx_timtaw_enable','be_groups','uid='.intval($record['usergroup']));
+					if($record = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res)) {
+						if($record['tx_timtaw_enable'] == 1) {
+							return 1;
+						}
+					}
+				}
+			}
 		} else {
 			return 0;
 		}
@@ -272,10 +287,23 @@ class tx_timtaw_pi2 extends tslib_pibase {
 	 * @return	string		HTML
 	 */
 	function generatePagePanel() {
-		return  $this->pi_linkTP(
+		
+		$this->templateCode =  $this->cObj->fileResource($this->conf["templateFile"]);
+		
+		$template = $this->cObj->getSubpart($this->templateCode,
+      '###PAGEPANEL###');
+		
+		$markerArray['###EDITPAGE###'] = $this->pi_linkTP(
 			$this->pi_getLL('editPage'),
 			array('wikiLogin' => 1)
 			);
+		$markerArray['###SHOWREVISIONS###'] = $this->pi_linkTP(
+			$this->pi_getLL('showRevisions'),
+			array('tx_timtaw_pi2[cmd]' => 'revision')
+			);
+		
+		return $this->cObj->substituteMarkerArrayCached($template, $markerArray, array(), Array() );
+
 	}
 
 }

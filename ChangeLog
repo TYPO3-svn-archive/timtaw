@@ -1,3 +1,6 @@
+2005-03-08  Sebastian Kurfuerst  <sebastian@garbage-group.de>
+	* core change in class.t3lib_userauth.php (class.t3lib_userauth.patch)
+
 2005-03-02  Sebastian Kurfuerst  <sebastian@garbage-group.de>
 	* fixed bugs
 	* found bug in core (ID 842), which has to be fixed. until then, [BE][lockBeUserToDBmounts] has to be set to 0 which is a huge security hole.

@@ -8,13 +8,13 @@
 $LOCAL_LANG = Array (
 	'default' => Array (
 		'editPage' => 'Edit this page',
-		
+		'showRevisions' => 'Show revision of page',
 		'timeFormat' => '%D %T',
 		'action_e' => 'Edited',
 		'action_n' => 'New content element',
 		'action_d' => 'Content element deleted',
 		'action_m' => 'Content element moved',
-		'showVersion' => 'Show version'
+		'showVersion' => 'Show version',
 	),
 	'dk' => Array (
 	),
