@@ -6,10 +6,6 @@
         <csh_table></csh_table>
         <fileId>EXT:timtaw/cm1/locallang.xml</fileId>
         <labelContext type="array">
-            <label index="title"></label>
-            <label index="function1"></label>
-            <label index="function2"></label>
-            <label index="function3"></label>
         </labelContext>
     </meta>
     <data type="array">

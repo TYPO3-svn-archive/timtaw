@@ -1,92 +1,92 @@
 <?php
 /**
- * Language labels for extension "timtaw"
+ * Language labels for extension 'timtaw'
  * 
  * This file is detected by the translation tool.
  */
 
 $LOCAL_LANG = Array (
-	"default" => Array (
-		"cm1_title" => "Wikify",	
+	'default' => Array (
+		'cm1_title' => 'Wikify',	
 	),
-	"dk" => Array (
+	'dk' => Array (
 	),
-	"de" => Array (
-		"cm1_title" => "Wikifizieren",	
+	'de' => Array (
+		'cm1_title' => 'Wikifizieren',	
 	),
-	"no" => Array (
+	'no' => Array (
 	),
-	"it" => Array (
+	'it' => Array (
 	),
-	"fr" => Array (
+	'fr' => Array (
 	),
-	"es" => Array (
+	'es' => Array (
 	),
-	"nl" => Array (
+	'nl' => Array (
 	),
-	"cz" => Array (
+	'cz' => Array (
 	),
-	"pl" => Array (
+	'pl' => Array (
 	),
-	"si" => Array (
+	'si' => Array (
 	),
-	"fi" => Array (
+	'fi' => Array (
 	),
-	"tr" => Array (
+	'tr' => Array (
 	),
-	"se" => Array (
+	'se' => Array (
 	),
-	"pt" => Array (
+	'pt' => Array (
 	),
-	"ru" => Array (
+	'ru' => Array (
 	),
-	"ro" => Array (
+	'ro' => Array (
 	),
-	"ch" => Array (
+	'ch' => Array (
 	),
-	"sk" => Array (
+	'sk' => Array (
 	),
-	"lt" => Array (
+	'lt' => Array (
 	),
-	"is" => Array (
+	'is' => Array (
 	),
-	"hr" => Array (
+	'hr' => Array (
 	),
-	"hu" => Array (
+	'hu' => Array (
 	),
-	"gl" => Array (
+	'gl' => Array (
 	),
-	"th" => Array (
+	'th' => Array (
 	),
-	"gr" => Array (
+	'gr' => Array (
 	),
-	"hk" => Array (
+	'hk' => Array (
 	),
-	"eu" => Array (
+	'eu' => Array (
 	),
-	"bg" => Array (
+	'bg' => Array (
 	),
-	"br" => Array (
+	'br' => Array (
 	),
-	"et" => Array (
+	'et' => Array (
 	),
-	"ar" => Array (
+	'ar' => Array (
 	),
-	"he" => Array (
+	'he' => Array (
 	),
-	"ua" => Array (
+	'ua' => Array (
 	),
-	"lv" => Array (
+	'lv' => Array (
 	),
-	"jp" => Array (
+	'jp' => Array (
 	),
-	"vn" => Array (
+	'vn' => Array (
 	),
-	"ca" => Array (
+	'ca' => Array (
 	),
-	"ba" => Array (
+	'ba' => Array (
 	),
-	"kr" => Array (
+	'kr' => Array (
 	),
 );
 ?>
