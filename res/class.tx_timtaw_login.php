@@ -39,7 +39,6 @@ class tx_timtaw_login {
 	 * Main function, registering itself as a hook
 	 */
 	function loginBackendUser($params, $parent = '')	{
-		echo PATH_t3lib;
 		require_once (PATH_t3lib.'class.t3lib_befunc.php');
 		
 			// log out user if logged in when needed
