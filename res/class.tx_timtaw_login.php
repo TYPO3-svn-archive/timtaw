@@ -39,7 +39,6 @@ class tx_timtaw_login {
 	 */
 	function loginBackendUser($params, $parent = '')	{
 		require_once ($params['PATH_t3lib'].'class.t3lib_befunc.php');
-		
 		if(t3lib_div::_GP('wikiLogin')) {
 			$pid = t3lib_div::_GP('pageID');
 			$record = t3lib_BEfunc::getRecordRaw('pages','uid='.intval($pid),'tx_timtaw_enable,tx_timtaw_backenduser');

@@ -100,8 +100,8 @@ Array
 									</table>
 								';*/
 			$content = '<div style="border:1px dotted black; padding: 5px;">'.$content.' </div><div style="width: 100%; text-align:right;">'.$editIcons.'</div>';
-			return $content;
 		}
+		return $content;
 	}
 }
 
