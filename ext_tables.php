@@ -128,6 +128,13 @@ t3lib_div::loadTCA('fe_users');
 t3lib_extMgm::addTCAcolumns('fe_users',$tempColumns,1);
 t3lib_extMgm::addToAllTCAtypes('fe_users','tx_timtaw_begroup');
 
+t3lib_div::loadTCA('fe_groups');
+t3lib_extMgm::addTCAcolumns('fe_groups',$tempColumns,1);
+t3lib_extMgm::addToAllTCAtypes('fe_groups','tx_timtaw_begroup');
+
+
+
+
 $tempColumns = Array (
 	'tx_timtaw_enable' => Array (		
 		'exclude' => 1,		

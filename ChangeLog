@@ -1,5 +1,8 @@
-2005-03-08  Sebastian Kurfuerst  <sebastian@garbage-group.de>
+2005-03-09  Sebastian Kurfuerst  <sebastian@garbage-group.de>
 	* core change in class.t3lib_userauth.php (class.t3lib_userauth.patch)
+	* negative UIDs for virtual BE users
+	* inserted standard UC for virtual backend users (else edit panels are not shown)
+	* started to work on "no-fe-user-needed" mode
 
 2005-03-02  Sebastian Kurfuerst  <sebastian@garbage-group.de>
 	* fixed bugs

@@ -22,7 +22,13 @@ CREATE TABLE fe_users (
 	tx_timtaw_begroup tinyblob NOT NULL,
 );
 
-  
+#
+# Table structure for table 'fe_groups'
+#
+CREATE TABLE fe_groups (
+	tx_timtaw_begroup tinyblob NOT NULL,
+);
+
 #
 # Table structure for table 'be_sessions'
 #

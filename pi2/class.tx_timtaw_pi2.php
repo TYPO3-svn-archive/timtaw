@@ -50,7 +50,7 @@ class tx_timtaw_pi2 extends tslib_pibase {
 		
 		$content = $this->editSwitch();
 		
-		if($this->timtawEnabled()) {
+	/*	if($this->timtawEnabled()) {
 			switch($this->piVars['cmd']) {
 				case 'revision':
 					$content = $this->generateRevisionList();
@@ -59,21 +59,32 @@ class tx_timtaw_pi2 extends tslib_pibase {
 					$content = $this->generatePagePanel();
 				break;
 			}
-		}
+		}*/
 		return $this->pi_wrapInBaseClass($content);
 	}
 	
-	
 	function editSwitch() {
-		if($GLOBALS['TSFE']->fe_user->user['tx_timtaw_begroup']) {
+		#debug($GLOBALS['TSFE']->fe_user->user);
+		
+		$beGroup = tx_timtaw_login::getBEgroup($this->conf['templateFrontendUser']);
+		if($beGroup) {
 				// wenn schon ein BE_USER eingeloggt ist
 			if($GLOBALS['BE_USER']->user['uid']) {
 				$content ='You are in: <i>edit mode.</i> <BR /> Switch to:  <i>'.$this->pi_linkTP('normal mode',array('tx_timtaw_logout'=>1)).'.</i>';
 			} else {
 				$content ='You are in: <i>normal mode.</i> <BR /> Switch to:  <i>'.$this->pi_linkTP('edit mode',array('tx_timtaw_login'=>1)).'.</i>';
+				
+				if($this->conf['templateBackendUser']) {
+					$GLOBALS["TSFE"]->fe_user->setKey('ses','tx_timtaw_login', $this->conf['templateBackendUser']);
+				} else {
+					$GLOBALS["TSFE"]->fe_user->setKey('ses','tx_timtaw_login', '');
+				}
 			}
 		}
-		return $_COOKIE['be_typo_user'].'<BR />'.$content;
+		
+		#$content .= '<BR/>'.$_COOKIE['be_typo_user'].'<BR />';
+		
+		return $content;
 	}
 
 	
