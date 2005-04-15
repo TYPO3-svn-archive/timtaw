@@ -1,6 +1,5 @@
 plugin.tx_timtaw_pi2 {
 	templateFile = EXT:timtaw/pi2/res/revisionview.html
-	
 	#templateFrontendUser = 2
 }
 

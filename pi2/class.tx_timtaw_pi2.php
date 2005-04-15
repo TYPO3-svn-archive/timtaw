@@ -3,6 +3,7 @@
 *  Copyright notice
 *
 *  (c) 2004 Robert Lemke (robert@typo3.org)
+*  (c) 2005 Sebastian Kurfuerst (sebastian@garbage-group.de)
 *  All rights reserved
 *
 *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -22,7 +23,7 @@
 *  This copyright notice MUST APPEAR in all copies of the script!
 ***************************************************************/
 /**
- * Plugin 'Frontend Toolbar' for the 'timtaw' extension.
+ * Plugin 'Frontend Toolbar' for the 'TimTaw' extension.
  *
  * @author	Sebastian Kurfuerst  <sebastian@garbage-group.de>
  * @author  Ingmar Schlecht  <ingmar@typo3.org>
@@ -72,9 +73,9 @@ class tx_timtaw_pi2 extends tslib_pibase {
 			#debug($GLOBALS['BE_USER']);
 				// wenn schon ein BE_USER eingeloggt ist
 			if($GLOBALS['BE_USER']->user['uid']) {
-				$content ='You are in: <i>edit mode.</i> <BR /> Switch to:  <i>'.$this->pi_linkTP('normal mode',array('tx_timtaw_logout'=>1)).'.</i>';
+				$content = $this->pi_linkTP('<img src="'.t3lib_extMgm::siteRelPath('timtaw').'res/notEdit.png" />',array('tx_timtaw_logout'=>1));
 			} else {
-				$content ='You are in: <i>normal mode.</i> <BR /> Switch to:  <i>'.$this->pi_linkTP('edit mode',array('tx_timtaw_login'=>1)).'.</i>';
+				$content = $this->pi_linkTP('<img src="'.t3lib_extMgm::siteRelPath('timtaw').'res/edit.png" />',array('tx_timtaw_login'=>1));
 				
 				if($this->conf['templateFrontendUser']) {
 					$GLOBALS["TSFE"]->fe_user->setKey('ses','tx_timtaw_login', $this->conf['templateFrontendUser']);

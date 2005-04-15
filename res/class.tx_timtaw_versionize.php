@@ -3,6 +3,7 @@
 *  Copyright notice
 *
 *  (c) 2004 Robert Lemke (robert@typo3.org)
+*  (c) 2005 Sebastian Kurfuerst (sebastian@garbage-group.de)
 *  All rights reserved
 *
 *  This script is part of the TYPO3 project. The TYPO3 project is

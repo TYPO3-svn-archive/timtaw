@@ -3,6 +3,7 @@
 *  Copyright notice
 *
 *  (c) 2004 Robert Lemke (robert@typo3.org)
+*  (c) 2005 Sebastian Kurfuerst (sebastian@garbage-group.de)
 *  All rights reserved
 *
 *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -71,8 +72,8 @@ class tx_timtaw_login {
 	 * gets backend group for a certain FE user
 	 */
 	function getBEgroup($frontendUserTSsetting = '') {
-		
-		if(!$GLOBALS['TSFE'] && !strstr(t3lib_div::_GET('returnUrl'), 'tx_timtaw_login')) {
+		$retUrl = t3lib_div::_GET('returnUrl');
+		if(!$GLOBALS['TSFE'] && empty($retUrl)) {
 			return '';
 		}
 		
@@ -112,7 +113,8 @@ class tx_timtaw_login {
 					'uid' => $sessionRow['ses_userid'], 
 					'pid' => '0',
 					'usergroup' => $beGroup,
-					'admin' => '0', // muss natürlich noch geändert werden
+					'admin' => '0',
+					'options' => '3' // get DB and file mounts from groups
 				);
 
 					// set UC to the correct admin panel options
@@ -126,6 +128,10 @@ class tx_timtaw_login {
 				);
 				$uc=serialize($uc_new);
 				$user['uc'] = $uc;
+				
+				$tsConfig = "admPanel.enable.edit=1
+					admPanel.hide=1";
+				$user['TSconfig'] = $tsConfig;
 				$user = array_merge($this->user,$user,$sessionRow);
 
 				

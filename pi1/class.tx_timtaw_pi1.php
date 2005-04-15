@@ -3,6 +3,7 @@
 *  Copyright notice
 *
 *  (c) 2004 Robert Lemke (robert@typo3.org)
+*  (c) 2005 Sebastian Kurfuerst (sebastian@garbage-group.de)
 *  All rights reserved
 *
 *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -22,7 +23,7 @@
 *  This copyright notice MUST APPEAR in all copies of the script!
 ***************************************************************/
 /**
- * Plugin 'Diff view' for the 'timtaw' extension. NOT USED AT THE MOMENT
+ * OBSOLETE!!!
  *
  * @author	Sebastian Kurfuerst <sebastian@garbage-group.de>
  */
